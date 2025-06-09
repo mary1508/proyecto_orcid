@@ -1,0 +1,361 @@
+swagger: '2.0'
+basePath: /
+paths: !!python/object/apply:collections.OrderedDict
+- - - /api/authors/
+    - get:
+        responses:
+          '401':
+            description: No autorizado
+          '200':
+            description: "Operaci\xF3n exitosa"
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/Autor'
+        summary: Lista todos los autores
+        operationId: listar_autores
+        security:
+        - Bearer: []
+        tags:
+        - Autores
+      post:
+        responses:
+          '401':
+            description: No autorizado
+          '400':
+            description: "Datos inv\xE1lidos"
+          '201':
+            description: Autor creado exitosamente
+        summary: Crea un nuevo autor
+        operationId: crear_autor
+        parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/Autor'
+        security:
+        - Bearer: []
+        tags:
+        - Autores
+  - - /api/authors/{id}
+    - parameters:
+      - description: Identificador del autor
+        name: id
+        in: path
+        required: true
+        type: integer
+      delete:
+        responses:
+          '401':
+            description: No autorizado
+          '404':
+            description: Autor no encontrado
+          '204':
+            description: Autor eliminado exitosamente
+        summary: Elimina un autor
+        operationId: eliminar_autor
+        security:
+        - Bearer: []
+        tags:
+        - Autores
+      put:
+        responses:
+          '401':
+            description: No autorizado
+          '404':
+            description: Autor no encontrado
+          '400':
+            description: "Datos inv\xE1lidos"
+          '200':
+            description: Autor actualizado exitosamente
+        summary: Actualiza un autor existente
+        operationId: actualizar_autor
+        parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/Autor'
+        security:
+        - Bearer: []
+        tags:
+        - Autores
+      get:
+        responses:
+          '401':
+            description: No autorizado
+          '404':
+            description: Autor no encontrado
+          '200':
+            description: "Operaci\xF3n exitosa"
+            schema:
+              $ref: '#/definitions/Autor'
+        summary: Obtiene un autor por su ID
+        operationId: obtener_autor
+        security:
+        - Bearer: []
+        tags:
+        - Autores
+  - - /api/orcid/researcher/{orcid_id}
+    - parameters:
+      - description: Identificador ORCID del investigador
+        name: orcid_id
+        in: path
+        required: true
+        type: string
+      get:
+        responses:
+          '401':
+            description: No autorizado
+          '404':
+            description: Investigador no encontrado
+          '200':
+            description: "Operaci\xF3n exitosa"
+            schema:
+              $ref: '#/definitions/Investigador%20ORCID'
+        summary: "Obtiene informaci\xF3n b\xE1sica de un investigador por su ORCID\
+          \ ID"
+        operationId: obtener_investigador
+        security:
+        - Bearer: []
+        tags:
+        - ORCID
+  - - /api/orcid/researcher/{orcid_id}/works
+    - parameters:
+      - description: Identificador ORCID del investigador
+        name: orcid_id
+        in: path
+        required: true
+        type: string
+      get:
+        responses:
+          '401':
+            description: No autorizado
+          '404':
+            description: Publicaciones no encontradas
+          '200':
+            description: "Operaci\xF3n exitosa"
+            schema:
+              $ref: '#/definitions/OrcidWorksResponse'
+        summary: Obtiene las publicaciones de un investigador por su ORCID ID
+        operationId: obtener_publicaciones
+        security:
+        - Bearer: []
+        tags:
+        - ORCID
+  - - /api/orcid/sync/{orcid_id}
+    - parameters:
+      - description: Identificador ORCID del investigador
+        name: orcid_id
+        in: path
+        required: true
+        type: string
+      post:
+        responses:
+          '401':
+            description: No autorizado
+          '404':
+            description: Investigador no encontrado
+          '200':
+            description: "Sincronizaci\xF3n exitosa"
+        summary: Sincroniza datos de un investigador desde ORCID
+        operationId: sincronizar_investigador
+        security:
+        - Bearer: []
+        tags:
+        - ORCID
+  - - /api/publications/
+    - get:
+        responses:
+          '401':
+            description: No autorizado
+          '200':
+            description: "Operaci\xF3n exitosa"
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/Publicaci%C3%B3n'
+        summary: Lista todas las publicaciones
+        operationId: listar_publicaciones
+        security:
+        - Bearer: []
+        tags:
+        - Publicaciones
+      post:
+        responses:
+          '401':
+            description: No autorizado
+          '400':
+            description: "Datos inv\xE1lidos"
+          '201':
+            description: "Publicaci\xF3n creada exitosamente"
+        summary: "Crea una nueva publicaci\xF3n"
+        operationId: crear_publicacion
+        parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/Publicaci%C3%B3n'
+        security:
+        - Bearer: []
+        tags:
+        - Publicaciones
+info:
+  title: "API de Gesti\xF3n de Publicaciones Acad\xE9micas"
+  version: '1.0'
+  description: "API para gestionar publicaciones acad\xE9micas, proyectos y datos\
+    \ de investigadores"
+produces:
+- application/json
+consumes:
+- application/json
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    in: header
+    name: Authorization
+    description: 'Introduce tu token con el formato: Bearer {token}'
+security:
+- Bearer: []
+tags:
+- name: Autores
+  description: Operaciones relacionadas con autores
+- name: Publicaciones
+  description: Operaciones relacionadas con publicaciones
+- name: ORCID
+  description: "Operaciones relacionadas con la integraci\xF3n de ORCID"
+definitions:
+  Autor:
+    required:
+    - first_name
+    - last_name
+    properties:
+      id:
+        type: integer
+        description: "Identificador \xFAnico del autor"
+        readOnly: true
+      first_name:
+        type: string
+        description: Nombre del autor
+      last_name:
+        type: string
+        description: Apellido del autor
+      orcid_id:
+        type: string
+        description: Identificador ORCID del autor
+      email:
+        type: string
+        description: "Correo electr\xF3nico del autor"
+      affiliation:
+        type: string
+        description: "Afiliaci\xF3n institucional del autor"
+    type: object
+  "Publicaci\xF3n":
+    required:
+    - publication_type_id
+    - title
+    properties:
+      id:
+        type: integer
+        description: "Identificador \xFAnico de la publicaci\xF3n"
+        readOnly: true
+      title:
+        type: string
+        description: "T\xEDtulo de la publicaci\xF3n"
+      abstract:
+        type: string
+        description: "Resumen de la publicaci\xF3n"
+      year:
+        type: integer
+        description: "A\xF1o de publicaci\xF3n"
+      month:
+        type: integer
+        description: "Mes de publicaci\xF3n"
+      day:
+        type: integer
+        description: "D\xEDa de publicaci\xF3n"
+      doi:
+        type: string
+        description: "DOI de la publicaci\xF3n"
+      url:
+        type: string
+        description: "URL de la publicaci\xF3n"
+      publication_type_id:
+        type: integer
+        description: "ID del tipo de publicaci\xF3n"
+      journal_id:
+        type: integer
+        description: ID de la revista (si aplica)
+      conference_id:
+        type: integer
+        description: ID de la conferencia (si aplica)
+      pdf_path:
+        type: string
+        description: Ruta al documento PDF
+      external_id:
+        type: string
+        description: "Identificador externo de la publicaci\xF3n"
+    type: object
+  Investigador ORCID:
+    required:
+    - orcid_id
+    properties:
+      orcid_id:
+        type: string
+        description: Identificador ORCID del investigador
+      first_name:
+        type: string
+        description: Nombre del investigador
+      last_name:
+        type: string
+        description: Apellido del investigador
+      credit_name:
+        type: string
+        description: "Nombre de cr\xE9dito del investigador"
+      email:
+        type: string
+        description: "Correo electr\xF3nico del investigador"
+      affiliation:
+        type: string
+        description: "Afiliaci\xF3n del investigador"
+    type: object
+  OrcidWorksResponse:
+    properties:
+      data:
+        type: array
+        description: Lista de publicaciones del investigador
+        items:
+          $ref: "#/definitions/Publicaci\xF3n ORCID"
+    type: object
+  "Publicaci\xF3n ORCID":
+    properties:
+      title:
+        type: string
+        description: "T\xEDtulo de la publicaci\xF3n"
+      type:
+        type: string
+        description: "Tipo de publicaci\xF3n"
+      year:
+        type: integer
+        description: "A\xF1o de publicaci\xF3n"
+      journal:
+        type: string
+        description: "Revista o fuente de publicaci\xF3n"
+      external_id:
+        type: string
+        description: Identificador externo
+      doi:
+        type: string
+        description: "DOI de la publicaci\xF3n"
+      url:
+        type: string
+        description: "URL de la publicaci\xF3n"
+    type: object
+responses:
+  ParseError:
+    description: When a mask can't be parsed
+  MaskError:
+    description: When any error occurs on mask
+host: localhost:5000
