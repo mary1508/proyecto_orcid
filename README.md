@@ -77,7 +77,7 @@ JWT (JSON Web Token) es un estándar para transmitir información de forma segur
 ### Tipos de tokens en la aplicación:
 
 #### 1. **Access Token** (Token de Acceso)
-- **Duración**: 15 minutos
+- **Duración**: 1 hora
 - **Propósito**: Acceder a recursos protegidos
 - **Ubicación**: Header `Authorization: Bearer <token>`
 - **Contenido**: ID del usuario, rol, fecha de expiración
